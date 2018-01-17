@@ -2,63 +2,114 @@
 // See License.txt for license information.
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {FormattedHTMLMessage, FormattedMessage} from 'react-intl';
+
+import {RequestStatus} from 'mattermost-redux/constants';
 
 import Constants from 'utils/constants.jsx';
 import * as Utils from 'utils/utils.jsx';
 
-import AdminSettings from './admin_settings.jsx';
-import BooleanSetting from './boolean_setting.jsx';
-import ColorSetting from './color_setting.jsx';
-import DropdownSetting from './dropdown_setting.jsx';
-import PostEditSetting from './post_edit_setting.jsx';
-import RadioSetting from './radio_setting.jsx';
-import SettingsGroup from './settings_group.jsx';
-import TextSetting from './text_setting.jsx';
+import AdminSettings from '../admin_settings.jsx';
+import BooleanSetting from '../boolean_setting.jsx';
+import ColorSetting from '../color_setting.jsx';
+import DropdownSetting from '../dropdown_setting.jsx';
+import PostEditSetting from '../post_edit_setting.jsx';
+import RadioSetting from '../radio_setting.jsx';
+import SettingsGroup from '../settings_group.jsx';
+import TextSetting from '../text_setting.jsx';
+
+import {rolesFromPolicies, policyFromRoles} from 'utils/policy_roles_adapter';
 
 export default class PolicySettings extends AdminSettings {
+    static propTypes = {
+        actions: PropTypes.shape({
+            loadRolesIfNeeded: PropTypes.func.isRequired,
+            editRole: PropTypes.func.isRequired
+        }).isRequired
+    };
+
     constructor(props) {
         super(props);
 
         this.getConfigFromState = this.getConfigFromState.bind(this);
 
         this.renderSettings = this.renderSettings.bind(this);
+
+        this.state = {
+            ...this.state,
+            restrictPostDelete: '',
+            allowEditPost: '',
+            restrictTeamInvite: '',
+            restrictPublicChannelCreation: '',
+            restrictPrivateChannelCreation: '',
+            restrictPublicChannelManagement: '',
+            restrictPrivateChannelManagement: '',
+            restrictPublicChannelDeletion: '',
+            restrictPrivateChannelDeletion: '',
+            restrictPrivateChannelManageMembers: ''
+        };
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.rolesRequest.status === RequestStatus.SUCCESS && this.props.rolesRequest.status !== RequestStatus.SUCCESS) {
+            const nextRoles = nextProps.roles;
+            this.setState({
+                restrictPostDelete: policyFromRoles('restrictPostDelete', nextRoles),
+                allowEditPost: policyFromRoles('allowEditPost', nextRoles),
+                restrictTeamInvite: policyFromRoles('restrictTeamInvite', nextRoles),
+                restrictPublicChannelCreation: policyFromRoles('restrictPublicChannelCreation', nextRoles),
+                restrictPrivateChannelCreation: policyFromRoles('restrictPrivateChannelCreation', nextRoles),
+                restrictPublicChannelManagement: policyFromRoles('restrictPublicChannelManagement', nextRoles),
+                restrictPrivateChannelManagement: policyFromRoles('restrictPrivateChannelManagement', nextRoles),
+                restrictPublicChannelDeletion: policyFromRoles('restrictPublicChannelDeletion', nextRoles),
+                restrictPrivateChannelDeletion: policyFromRoles('restrictPrivateChannelDeletion', nextRoles),
+                restrictPrivateChannelManageMembers: policyFromRoles('restrictPrivateChannelManageMembers', nextRoles)
+            });
+        }
+    }
+
+    componentWillMount() {
+        this.props.actions.loadRolesIfNeeded(['channel_user', 'team_user', 'channel_admin', 'team_admin', 'system_admin']);
+    }
+
+    handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const updatedRoles = rolesFromPolicies(this.state, this.props.roles);
+
+        let success = true;
+
+        await Promise.all(Object.entries(updatedRoles).map(async (item) => {
+            try {
+                await this.props.actions.editRole(item);
+            } catch (err) {
+                success = false;
+                this.setState({
+                    saving: false,
+                    serverError: err.message
+                });
+            }
+        }));
+
+        if (success) {
+            this.doSubmit();
+        }
+    };
+
     getConfigFromState(config) {
-        config.ServiceSettings.RestrictPostDelete = this.state.restrictPostDelete;
-        config.ServiceSettings.AllowEditPost = this.state.allowEditPost;
         config.ServiceSettings.PostEditTimeLimit = this.parseIntNonZero(this.state.postEditTimeLimit, Constants.DEFAULT_POST_EDIT_TIME_LIMIT);
-        config.TeamSettings.RestrictTeamInvite = this.state.restrictTeamInvite;
-        config.TeamSettings.RestrictPublicChannelCreation = this.state.restrictPublicChannelCreation;
-        config.TeamSettings.RestrictPrivateChannelCreation = this.state.restrictPrivateChannelCreation;
-        config.TeamSettings.RestrictPublicChannelManagement = this.state.restrictPublicChannelManagement;
-        config.TeamSettings.RestrictPrivateChannelManagement = this.state.restrictPrivateChannelManagement;
-        config.TeamSettings.RestrictPublicChannelDeletion = this.state.restrictPublicChannelDeletion;
-        config.TeamSettings.RestrictPrivateChannelDeletion = this.state.restrictPrivateChannelDeletion;
-        config.TeamSettings.RestrictPrivateChannelManageMembers = this.state.restrictPrivateChannelManageMembers;
         config.AnnouncementSettings.EnableBanner = this.state.enableBanner;
         config.AnnouncementSettings.BannerText = this.state.bannerText;
         config.AnnouncementSettings.BannerColor = this.state.bannerColor;
         config.AnnouncementSettings.BannerTextColor = this.state.bannerTextColor;
         config.AnnouncementSettings.AllowBannerDismissal = this.state.allowBannerDismissal;
-
         return config;
     }
 
     getStateFromConfig(config) {
         return {
-            restrictPostDelete: config.ServiceSettings.RestrictPostDelete,
-            allowEditPost: config.ServiceSettings.AllowEditPost,
             postEditTimeLimit: config.ServiceSettings.PostEditTimeLimit,
-            restrictTeamInvite: config.TeamSettings.RestrictTeamInvite,
-            restrictPublicChannelCreation: config.TeamSettings.RestrictPublicChannelCreation,
-            restrictPrivateChannelCreation: config.TeamSettings.RestrictPrivateChannelCreation,
-            restrictPublicChannelManagement: config.TeamSettings.RestrictPublicChannelManagement,
-            restrictPrivateChannelManagement: config.TeamSettings.RestrictPrivateChannelManagement,
-            restrictPublicChannelDeletion: config.TeamSettings.RestrictPublicChannelDeletion,
-            restrictPrivateChannelDeletion: config.TeamSettings.RestrictPrivateChannelDeletion,
-            restrictPrivateChannelManageMembers: config.TeamSettings.RestrictPrivateChannelManageMembers,
             enableBanner: config.AnnouncementSettings.EnableBanner,
             bannerText: config.AnnouncementSettings.BannerText,
             bannerColor: config.AnnouncementSettings.BannerColor,
