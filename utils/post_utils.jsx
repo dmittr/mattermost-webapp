@@ -2,16 +2,13 @@
 // See License.txt for license information.
 
 import React from 'react';
-
 import {Parser, ProcessNodeDefinitions} from 'html-to-react';
 
 import ChannelStore from 'stores/channel_store.jsx';
 import TeamStore from 'stores/team_store.jsx';
 import UserStore from 'stores/user_store.jsx';
-
 import Constants from 'utils/constants.jsx';
 import * as Utils from 'utils/utils.jsx';
-
 import AtMention from 'components/at_mention';
 import MarkdownImage from 'components/markdown_image';
 

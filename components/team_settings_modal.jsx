@@ -2,14 +2,14 @@
 // See License.txt for license information.
 
 import $ from 'jquery';
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {defineMessages, FormattedMessage, injectIntl, intlShape} from 'react-intl';
 
 import * as Utils from 'utils/utils.jsx';
+import {AsyncComponent} from 'components/async_load';
+import loadSettingsSidebar from 'bundle-loader?lazy!./settings_sidebar.jsx';
 
-import SettingsSidebar from './settings_sidebar.jsx';
 import TeamSettings from './team_settings.jsx';
 
 const holders = defineMessages({
@@ -105,7 +105,8 @@ class TeamSettingsModal extends React.Component {
                         <div className='modal-body settings-modal__body'>
                             <div className='settings-table'>
                                 <div className='settings-links'>
-                                    <SettingsSidebar
+                                    <AsyncComponent
+                                        doLoad={loadSettingsSidebar}
                                         tabs={tabs}
                                         activeTab={this.state.activeTab}
                                         updateTab={this.updateTab}

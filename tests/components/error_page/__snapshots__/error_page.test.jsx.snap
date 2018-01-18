@@ -26,8 +26,7 @@ exports[`components/error_page/ErrorPage should match snapshot, local_storage ty
       type="local_storage"
     />
     <Link
-      onlyActiveOnIndex={false}
-      style={Object {}}
+      replace={false}
       to="/"
     >
       <FormattedMessage
@@ -66,8 +65,7 @@ exports[`components/error_page/ErrorPage should match snapshot, no type but with
       type=""
     />
     <Link
-      onlyActiveOnIndex={false}
-      style={Object {}}
+      replace={false}
       to="/"
     >
       <FormattedMessage
@@ -106,8 +104,7 @@ exports[`components/error_page/ErrorPage should match snapshot, oauth_missing_co
       type="oauth_missing_code"
     />
     <Link
-      onlyActiveOnIndex={false}
-      style={Object {}}
+      replace={false}
       to="/"
     >
       <FormattedMessage
@@ -146,8 +143,7 @@ exports[`components/error_page/ErrorPage should match snapshot, page_not_found t
       type="page_not_found"
     />
     <Link
-      onlyActiveOnIndex={false}
-      style={Object {}}
+      replace={false}
       to="/"
     >
       <FormattedMessage
@@ -186,8 +182,7 @@ exports[`components/error_page/ErrorPage should match snapshot, permalink_not_fo
       type="permalink_not_found"
     />
     <Link
-      onlyActiveOnIndex={false}
-      style={Object {}}
+      replace={false}
       to="/"
     >
       <FormattedMessage

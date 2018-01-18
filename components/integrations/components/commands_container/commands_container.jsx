@@ -3,6 +3,12 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import {Route, Switch, Redirect} from 'react-router-dom';
+
+import InstalledCommands from 'components/integrations/components/installed_commands';
+import AddCommand from 'components/integrations/components/add_command';
+import EditCommand from 'components/integrations/components/edit_command';
+import ConfirmIntegration from 'components/integrations/components/confirm_integration';
 
 export default class CommandsContainer extends React.PureComponent {
     static propTypes = {
@@ -16,11 +22,6 @@ export default class CommandsContainer extends React.PureComponent {
         * The user data needed to pass into child components
         */
         user: PropTypes.object,
-
-        /**
-        * The children prop needed to render child component
-        */
-        children: PropTypes.node.isRequired,
 
         /**
         * Set if user is admin
@@ -62,16 +63,50 @@ export default class CommandsContainer extends React.PureComponent {
     }
 
     render() {
+        const extraProps = {
+            loading: this.state.loading,
+            commands: this.props.commands || [],
+            users: this.props.users,
+            team: this.props.team,
+            user: this.props.user,
+            isAdmin: this.props.isAdmin
+        };
+        const CommandRoute = ({component: Component, ...rest}) => (
+            <Route
+                {...rest}
+                render={(props) => (
+                    <Component
+                        {...extraProps}
+                        {...props}
+                    />
+            )}
+            />
+        );
         return (
             <div>
-                {React.cloneElement(this.props.children, {
-                    loading: this.state.loading,
-                    commands: this.props.commands || [],
-                    users: this.props.users,
-                    team: this.props.team,
-                    user: this.props.user,
-                    isAdmin: this.props.isAdmin
-                })}
+                <Switch>
+                    <Route
+                        exact={true}
+                        path={`${this.props.match.url}/`}
+                        render={() => (<Redirect to={`${this.props.match.url}/installed`}/>)}
+                    />
+                    <CommandRoute
+                        path={`${this.props.match.url}/installed`}
+                        component={InstalledCommands}
+                    />
+                    <CommandRoute
+                        path={`${this.props.match.url}/add`}
+                        component={AddCommand}
+                    />
+                    <CommandRoute
+                        path={`${this.props.match.url}/edit`}
+                        component={EditCommand}
+                    />
+                    <CommandRoute
+                        path={`${this.props.match.url}/confirm`}
+                        component={ConfirmIntegration}
+                    />
+                </Switch>
             </div>
         );
     }

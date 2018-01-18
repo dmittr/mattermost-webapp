@@ -4,18 +4,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
-import {browserHistory, Link} from 'react-router';
-
+import {Link} from 'react-router-dom';
 import {Client4} from 'mattermost-redux/client';
 
+import {browserHistory} from 'utils/browser_history';
 import * as GlobalActions from 'actions/global_actions.jsx';
 import {addUserToTeamFromInvite, getInviteInfo} from 'actions/team_actions.jsx';
 import {loadMe} from 'actions/user_actions.jsx';
 import BrowserStore from 'stores/browser_store.jsx';
 import UserStore from 'stores/user_store.jsx';
-
 import logoImage from 'images/logo.png';
-
 import AnnouncementBar from 'components/announcement_bar';
 import BackButton from 'components/common/back_button.jsx';
 import FormError from 'components/form_error.jsx';
@@ -62,10 +60,11 @@ export default class SignupController extends React.Component {
 
     componentDidMount() {
         BrowserStore.removeGlobalItem('team');
-        if (this.props.location.query) {
-            const hash = this.props.location.query.h;
-            const data = this.props.location.query.d;
-            const inviteId = this.props.location.query.id;
+        if (this.props.location.search) {
+            const params = new URLSearchParams(this.props.location.search);
+            const hash = params.get('h');
+            const data = params.get('d');
+            const inviteId = params.get('id');
 
             const userLoggedIn = UserStore.getCurrentUser() != null;
 

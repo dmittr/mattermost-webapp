@@ -3,7 +3,6 @@
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-
 import {favoriteChannel, leaveChannel, unfavoriteChannel} from 'mattermost-redux/actions/channels';
 import {General, Preferences} from 'mattermost-redux/constants';
 import {getChannel, getMyChannelMember} from 'mattermost-redux/selectors/entities/channels';
@@ -14,7 +13,6 @@ import {getUserIdFromChannelName, isDefault, isFavoriteChannel} from 'mattermost
 
 import {showFlaggedPosts, showPinnedPosts, showMentions, closeRightHandSide} from 'actions/views/rhs';
 import {openModal} from 'actions/views/modals';
-
 import {getRhsState} from 'selectors/rhs';
 
 import ChannelHeader from './channel_header.jsx';

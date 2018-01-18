@@ -4,8 +4,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {FormattedDate, FormattedMessage} from 'react-intl';
-import {browserHistory, Link} from 'react-router';
+import {Link} from 'react-router-dom';
 
+import {browserHistory} from 'utils/browser_history';
 import PostMessageContainer from 'components/post_view/post_message_view';
 import FileAttachmentListContainer from 'components/file_attachment_list';
 import CommentIcon from 'components/common/comment_icon.jsx';
@@ -14,7 +15,6 @@ import ProfilePicture from 'components/profile_picture.jsx';
 import UserProfile from 'components/user_profile.jsx';
 import PostFlagIcon from 'components/post_view/post_flag_icon.jsx';
 import PostBodyAdditionalContent from 'components/post_view/post_body_additional_content.jsx';
-
 import Constants from 'utils/constants.jsx';
 import * as PostUtils from 'utils/post_utils.jsx';
 import * as Utils from 'utils/utils.jsx';

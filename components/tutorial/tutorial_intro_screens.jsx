@@ -4,18 +4,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {FormattedHTMLMessage, FormattedMessage} from 'react-intl';
-import {browserHistory} from 'react-router';
 
+import {browserHistory} from 'utils/browser_history';
 import {trackEvent} from 'actions/diagnostics_actions.jsx';
 import * as GlobalActions from 'actions/global_actions.jsx';
 import {savePreference} from 'actions/user_actions.jsx';
 import PreferenceStore from 'stores/preference_store.jsx';
 import TeamStore from 'stores/team_store.jsx';
 import UserStore from 'stores/user_store.jsx';
-
 import {Constants, Preferences} from 'utils/constants.jsx';
 import {useSafeUrl} from 'utils/url.jsx';
-
 import AppIcons from 'images/appIcons.png';
 
 const NUM_SCREENS = 3;

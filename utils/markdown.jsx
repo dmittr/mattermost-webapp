@@ -3,8 +3,6 @@
 
 import marked from 'marked';
 
-import katex from 'katex';
-
 import * as SyntaxHighlighting from 'utils/syntax_highlighting.jsx';
 import * as TextFormatting from 'utils/text_formatting.jsx';
 import {isUrlSafe} from 'utils/url.jsx';
@@ -26,9 +24,11 @@ class MattermostMarkdownRenderer extends marked.Renderer {
 
         if (usedLanguage === 'tex' || usedLanguage === 'latex') {
             try {
-                const html = katex.renderToString(code, {throwOnError: false, displayMode: true});
+                return import('katex').then((katex) => {
+                    const html = katex.renderToString(code, {throwOnError: false, displayMode: true});
 
-                return '<div class="post-body--code tex">' + html + '</div>';
+                    return '<div class="post-body--code tex">' + html + '</div>';
+                });
             } catch (e) {
                 // fall through if latex parsing fails and handle below
             }
